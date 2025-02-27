@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// NextAuth required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Extended User model with more profile details
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  
+  // Enhanced profile fields
+  bio           String?
+  skills        String[]
+  department    String?
+  phoneNumber   String?
+  
+  // NextAuth required relations
+  accounts      Account[]
+  sessions      Session[]
+  
+  // Relationship fields
+  projects      Project[]
+  tasks         Task[]
+  comments      Comment[]
+  teamMemberships TeamMembership[]
+  notifications Notification[]
+  
+  // Add this line to reference uploaded documents
+  uploadedDocuments ProjectDocument[]
+}
+
+// Notification model for user updates and task assignments
+model Notification {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  
+  type        NotificationType
+  message     String
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  // Optional references
+  projectId   String?
+  taskId      String?
+}
+
+// Enhanced Project model with more details
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  
+  // Additional project metadata
+  status      ProjectStatus @default(ACTIVE)
+  priority    ProjectPriority @default(MEDIUM)
+  
+  // Relationships
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  tasks       Task[]
+  teamMembers TeamMembership[]
+  documents   ProjectDocument[]
+}
+
+// Project Document model for file attachments
+model ProjectDocument {
+  id          String   @id @default(cuid())
+  name        String
+  fileUrl     String
+  uploadedAt  DateTime @default(now())
+  
+  // Relationships
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+  uploadedBy  User     @relation(fields: [uploadedById], references: [id])
+  uploadedById String
+}
+
+// Enhanced Task model with more tracking capabilities
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      TaskStatus @default(BACKLOG)
+  priority    TaskPriority @default(MEDIUM)
+  
+  // Enhanced tracking
+  estimatedHours Float?
+  actualHours   Float?
+  
+  // Dates
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  startDate   DateTime?
+  dueDate     DateTime?
+  completedAt DateTime?
+  
+  // Relationships
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+  
+  assignedTo  User?    @relation(fields: [assignedToId], references: [id])
+  assignedToId String?
+  
+  comments    Comment[]
+  tags        TaskTag[]
+  dependencies TaskDependency[] @relation("TaskDependencies")
+}
+
+// Task Dependency model for complex task relationships
+model TaskDependency {
+  id              String @id @default(cuid())
+  task            Task   @relation("TaskDependencies", fields: [taskId], references: [id])
+  taskId          String
+  dependsOnTaskId String
+  type            DependencyType
+}
+
+// Team Membership model with more granular roles
+model TeamMembership {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String
+  role      TeamRole @default(MEMBER)
+  joinedAt  DateTime @default(now())
+  
+  @@unique([userId, projectId])
+}
+
+// Comment model with more context
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  
+  // Relationships
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  task      Task     @relation(fields: [taskId], references: [id])
+  taskId    String
+  
+  // Optional parent comment for thread support
+  parentCommentId String?
+  parentComment   Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id])
+  replies        Comment[] @relation("CommentReplies")
+}
+
+// Task Tag model with color coding
+model TaskTag {
+  id      String @id @default(cuid())
+  name    String @unique
+  color   String?
+  
+  // Relationships
+  tasks   Task[]
+}
+
+// Enums for various statuses and types
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+  BLOCKED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TeamRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum ProjectPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  TASK_UPDATED
+  PROJECT_INVITE
+  COMMENT_MENTION
+  DEADLINE_APPROACHING
+}
+
+enum DependencyType {
+  FINISH_TO_START
+  FINISH_TO_FINISH
+  START_TO_START
+  START_TO_FINISH
+}
