@@ -1,45 +1,18 @@
-// src/server/api/routers/task.ts
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
+
+// Reusable Zod schemas
+const taskStatus = z.enum(['BACKLOG', 'TODO', 'IN_PROGRESS', 'REVIEW', 'DONE', 'BLOCKED']);
+const taskPriority = z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
 
 export const taskRouter = createTRPCRouter({
-  getUserTasks: protectedProcedure
-    .query(async ({ ctx }) => {
-      const { session, prisma } = ctx;
-      
-      try {
-        const tasks = await prisma.task.findMany({
-          where: {
-            assignedToId: session.user.id,
-          },
-          include: {
-            project: true,
-            comments: {
-              orderBy: {
-                createdAt: 'desc',
-              },
-              take: 3,
-            },
-            tags: true,
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
-        });
-        
-        return tasks;
-      } catch (error) {
-        console.error("Error fetching user tasks:", error);
-        throw new Error("Failed to fetch tasks");
-      }
-    }),
-
   getTaskById: protectedProcedure
     .input(z.object({ taskId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { prisma } = ctx;
+      const { prisma, session } = ctx;
       const { taskId } = input;
-      
+
       try {
         const task = await prisma.task.findUnique({
           where: {
@@ -48,6 +21,7 @@ export const taskRouter = createTRPCRouter({
           include: {
             project: true,
             assignedTo: true,
+            creator: true,
             comments: {
               include: {
                 author: true,
@@ -59,122 +33,419 @@ export const taskRouter = createTRPCRouter({
             tags: true,
           },
         });
-        
+
+        if (!task) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Task not found",
+          });
+        }
+
+        // Check if user has access to this task's project
+        const projectMembership = await prisma.teamMembership.findFirst({
+          where: {
+            projectId: task.projectId,
+            userId: session.user.id,
+          },
+        });
+
+        if (!projectMembership) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have access to this task",
+          });
+        }
+
         return task;
       } catch (error) {
         console.error("Error fetching task:", error);
-        throw new Error("Failed to fetch task details");
+        if (error instanceof TRPCError) throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch task details",
+        });
       }
     }),
 
   getProjectTasks: protectedProcedure
     .input(z.object({ projectId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { prisma } = ctx;
+      const { prisma, session } = ctx;
       const { projectId } = input;
-      
+
       try {
+        // First, verify the user has access to this project
+        const projectMembership = await prisma.teamMembership.findFirst({
+          where: {
+            projectId,
+            userId: session.user.id,
+          },
+        });
+
+        if (!projectMembership) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You do not have access to this project's tasks",
+          });
+        }
+
         const tasks = await prisma.task.findMany({
           where: {
             projectId,
           },
           include: {
             assignedTo: true,
+            creator: true,
             tags: true,
           },
           orderBy: {
             createdAt: 'desc',
           },
         });
-        
+
         return tasks;
       } catch (error) {
         console.error("Error fetching project tasks:", error);
-        throw new Error("Failed to fetch project tasks");
+        if (error instanceof TRPCError) throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch project tasks",
+        });
       }
     }),
 
+    // Add this to your task router
+addComment: protectedProcedure
+.input(z.object({
+  taskId: z.string(),
+  content: z.string().min(1, "Comment cannot be empty")
+}))
+.mutation(async ({ ctx, input }) => {
+  const { prisma, session } = ctx;
+  const { taskId, content } = input;
+
+  try {
+    // First check if the task exists and the user has access to it
+    const task = await prisma.task.findUnique({
+      where: { id: taskId },
+      include: { project: true }
+    });
+
+    if (!task) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Task not found"
+      });
+    }
+
+    // Check if user has access to the project this task belongs to
+    const projectMembership = await prisma.teamMembership.findFirst({
+      where: {
+        projectId: task.projectId,
+        userId: session.user.id
+      }
+    });
+
+    if (!projectMembership) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You do not have access to comment on this task"
+      });
+    }
+
+    // Create the comment
+    const comment = await prisma.comment.create({
+      data: {
+        content,
+        author: {
+          connect: { id: session.user.id }
+        },
+        task: {
+          connect: { id: taskId }
+        }
+      },
+      include: {
+        author: true
+      }
+    });
+
+    // If the task has assignees, notify them about the comment (except the commenter)
+    const taskWithAssignees = await prisma.task.findUnique({
+      where: { id: taskId },
+      include: { assignedTo: true }
+    });
+
+    if (taskWithAssignees?.assignedTo) {
+      // Create notifications for assignees (except the commenter)
+      const notifications = taskWithAssignees.assignedTo
+        .filter(user => user.id !== session.user.id)
+        .map(user => ({
+          type: 'COMMENT_MENTION',
+          message: `New comment on task: ${task.title}`,
+          userId: user.id,
+          taskId,
+          projectId: task.projectId
+        }));
+
+      if (notifications.length > 0) {
+        await prisma.notification.createMany({
+          data: notifications
+        });
+      }
+    }
+
+    return comment;
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    if (error instanceof TRPCError) throw error;
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to add comment",
+      cause: error
+    });
+  }
+}),
+
+  deleteTask: protectedProcedure
+    .input(z.object({ taskId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { session, prisma } = ctx;
+      const { taskId } = input;
+
+      // First get the current task to check permissions
+      const task = await prisma.task.findUnique({
+        where: { id: taskId },
+        include: { project: true },
+      });
+
+      if (!task) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Task not found",
+        });
+      }
+
+      // Check if the user can delete this task (project owner or admin)
+      const canDelete = await prisma.teamMembership.findFirst({
+        where: {
+          userId: session.user.id,
+          projectId: task.projectId,
+          role: { in: ['OWNER', 'ADMIN'] },
+        },
+      });
+
+      if (!canDelete) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to delete this task",
+        });
+      }
+
+      // Delete the task
+      try {
+        await prisma.task.delete({
+          where: { id: taskId },
+        });
+
+        return { success: true };
+      } catch (error) {
+        console.error("Error deleting task:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to delete task",
+        });
+      }
+    }),
+
+  // In task router
   createTask: protectedProcedure
     .input(z.object({
       title: z.string().min(1, "Title is required"),
       description: z.string().optional(),
       projectId: z.string(),
-      status: z.enum(['BACKLOG', 'TODO', 'IN_PROGRESS', 'REVIEW', 'DONE', 'BLOCKED']).optional(),
-      priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),
-      assignedToId: z.string().optional(),
-      startDate: z.date().optional(),
-      dueDate: z.date().optional(),
+      status: taskStatus.optional().default('TODO'),
+      priority: taskPriority.optional().default('MEDIUM'),
+      assignedToIds: z.array(z.string()).optional(), // Change to support multiple assignees
+      startDate: z.union([
+        z.date(),
+        z.string().transform((val) => new Date(val))
+      ]).optional(),
+      dueDate: z.union([
+        z.date(), 
+        z.string().transform((val) => val ? new Date(val) : undefined)
+      ]).optional(),
       estimatedHours: z.number().optional(),
       tagIds: z.array(z.string()).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const { session, prisma } = ctx;
-      const { tagIds, ...data } = input;
+      const { tagIds, assignedToIds, ...data } = input;
+      
+      // Verify project access
+      const projectMembership = await prisma.teamMembership.findFirst({
+        where: {
+          projectId: input.projectId,
+          userId: session.user.id,
+        },
+      });
+
+      if (!projectMembership) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to create tasks in this project",
+        });
+      }
       
       try {
         // Create the task
         const newTask = await prisma.task.create({
           data: {
-            ...data,
-            status: data.status || 'BACKLOG',
-            priority: data.priority || 'MEDIUM',
+            title: data.title,
+            description: data.description,
+            status: data.status,
+            priority: data.priority,
+            // Add the creator relationship
+            creator: {
+              connect: { id: session.user.id }
+            },
+            project: {
+              connect: { id: input.projectId }
+            },
+            // Handle multiple assignees
+            ...(assignedToIds && assignedToIds.length > 0 && {
+              assignedTo: {
+                connect: assignedToIds.map(id => ({ id }))
+              }
+            }),
+            ...(data.startDate && { startDate: data.startDate }),
+            ...(data.dueDate && { dueDate: data.dueDate }),
+            ...(data.estimatedHours !== undefined && { estimatedHours: data.estimatedHours }),
             // Connect tags if provided
-            tags: tagIds?.length ? {
-              connect: tagIds.map(id => ({ id })),
-            } : undefined,
+            ...(tagIds?.length && { 
+              tags: {
+                connect: tagIds.map(id => ({ id })),
+              } 
+            }),
           },
+          include: {
+            assignedTo: true, // Include assigned users in the result
+          }
         });
         
-        // If the task is assigned to someone, create a notification
-        if (data.assignedToId) {
-          await prisma.notification.create({
-            data: {
-              type: 'TASK_ASSIGNED',
-              message: `You have been assigned to the task: ${data.title}`,
-              userId: data.assignedToId,
-              taskId: newTask.id,
-              projectId: data.projectId,
-            },
+        // Create notifications for all assigned users
+        if (assignedToIds && assignedToIds.length > 0) {
+          const notifications = assignedToIds.map(assignedToId => ({
+            type: 'TASK_ASSIGNED',
+            message: `You have been assigned to the task: ${data.title}`,
+            userId: assignedToId,
+            taskId: newTask.id,
+            projectId: input.projectId,
+          }));
+
+          await prisma.notification.createMany({
+            data: notifications
           });
         }
         
         return newTask;
       } catch (error) {
         console.error("Error creating task:", error);
-        throw new Error("Failed to create task");
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create task",
+          cause: error
+        });
       }
     }),
 
+  // Update the getUserTasks query to work with multiple assignees
+  getUserTasks: protectedProcedure
+    .query(async ({ ctx }) => {
+      const { session, prisma } = ctx;
+
+      try {
+        const tasks = await prisma.task.findMany({
+          where: {
+            assignedTo: {
+              some: {
+                id: session.user.id
+              }
+            }
+          },
+          include: {
+            project: true,
+            creator: true,
+            comments: {
+              orderBy: {
+                createdAt: 'desc',
+              },
+              take: 3,
+            },
+            tags: true,
+            assignedTo: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        });
+
+        return tasks;
+      } catch (error) {
+        console.error("Error fetching user tasks:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch tasks",
+          cause: error
+        });
+      }
+    }),
+
+  // Update task update method to support multiple assignees
   updateTask: protectedProcedure
     .input(z.object({
       id: z.string(),
       title: z.string().min(1, "Title is required").optional(),
       description: z.string().optional(),
-      status: z.enum(['BACKLOG', 'TODO', 'IN_PROGRESS', 'REVIEW', 'DONE', 'BLOCKED']).optional(),
-      priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),
-      assignedToId: z.string().optional(),
-      startDate: z.date().optional(),
-      dueDate: z.date().optional(),
+      status: taskStatus.optional(),
+      priority: taskPriority.optional(),
+      assignedToIds: z.array(z.string()).optional(), // Change to support multiple assignees
+      startDate: z.union([
+        z.date(),
+        z.string().transform((val) => new Date(val))
+      ]).optional(),
+      dueDate: z.union([
+        z.date(),
+        z.string().transform((val) => val ? new Date(val) : undefined)
+      ]).optional(),
       estimatedHours: z.number().optional(),
       actualHours: z.number().optional(),
-      completedAt: z.date().optional(),
+      completedAt: z.union([
+        z.date(),
+        z.string().transform((val) => new Date(val))
+      ]).optional(),
       tagIds: z.array(z.string()).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const { session, prisma } = ctx;
-      const { id, tagIds, ...data } = input;
+      const { id, tagIds, assignedToIds, ...data } = input;
       
-      // First get the current task to check permissions and track changes
+      // First get the current task to check permissions
       const currentTask = await prisma.task.findUnique({
         where: { id },
-        include: { project: true },
+        include: { 
+          project: true,
+          assignedTo: true 
+        },
       });
       
       if (!currentTask) {
-        throw new Error("Task not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Task not found",
+        });
       }
       
-      // Check if the user can update this task (project owner, admin, or the assigned user)
+      // Check if the user can update this task
       const canEdit = await prisma.teamMembership.findFirst({
         where: {
           userId: session.user.id,
@@ -183,20 +454,31 @@ export const taskRouter = createTRPCRouter({
         },
       });
       
-      if (!canEdit && currentTask.assignedToId !== session.user.id) {
-        throw new Error("You don't have permission to update this task");
+      if (!canEdit && !currentTask.assignedTo.some(user => user.id === session.user.id)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to update this task",
+        });
       }
       
       // Update the task
       try {
-        // Handle tag updates if provided
+        // Prepare update data
         const updateData: any = { ...data };
         
+        // Handle tag updates if provided
         if (tagIds !== undefined) {
-          // Disconnect all existing tags and connect the new ones
           updateData.tags = {
             set: [], // Disconnect all existing tags
             connect: tagIds.map(id => ({ id })),
+          };
+        }
+        
+        // Handle assignee updates
+        if (assignedToIds !== undefined) {
+          updateData.assignedTo = {
+            set: [], // Disconnect all existing assignees
+            connect: assignedToIds.map(id => ({ id })),
           };
         }
         
@@ -208,133 +490,72 @@ export const taskRouter = createTRPCRouter({
         const updatedTask = await prisma.task.update({
           where: { id },
           data: updateData,
+          include: {
+            assignedTo: true,
+          }
         });
         
-        // If the assignee has changed, create a notification for the new assignee
-        if (data.assignedToId && data.assignedToId !== currentTask.assignedToId) {
-          await prisma.notification.create({
-            data: {
+        // Create notifications for changes in assignees
+        if (assignedToIds) {
+          // Find newly added assignees
+          const newAssigneeIds = assignedToIds.filter(
+            id => !currentTask.assignedTo.some(user => user.id === id)
+          );
+          
+          if (newAssigneeIds.length > 0) {
+            const notifications = newAssigneeIds.map(assignedToId => ({
               type: 'TASK_ASSIGNED',
               message: `You have been assigned to the task: ${currentTask.title}`,
-              userId: data.assignedToId,
+              userId: assignedToId,
               taskId: id,
               projectId: currentTask.projectId,
-            },
-          });
-        }
-        
-        // If the status has changed, create a notification for relevant users
-        if (data.status && data.status !== currentTask.status) {
-          // Notify project owner
-          await prisma.notification.create({
-            data: {
-              type: 'TASK_UPDATED',
-              message: `Task "${currentTask.title}" status changed to ${data.status}`,
-              userId: currentTask.project.ownerId,
-              taskId: id,
-              projectId: currentTask.projectId,
-            },
-          });
+            }));
+
+            await prisma.notification.createMany({
+              data: notifications
+            });
+          }
         }
         
         return updatedTask;
       } catch (error) {
         console.error("Error updating task:", error);
-        throw new Error("Failed to update task");
-      }
-    }),
-
-  deleteTask: protectedProcedure
-    .input(z.object({ taskId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { session, prisma } = ctx;
-      const { taskId } = input;
-      
-      // First get the current task to check permissions
-      const task = await prisma.task.findUnique({
-        where: { id: taskId },
-        include: { project: true },
-      });
-      
-      if (!task) {
-        throw new Error("Task not found");
-      }
-      
-      // Check if the user can delete this task (project owner or admin)
-      const canDelete = await prisma.teamMembership.findFirst({
-        where: {
-          userId: session.user.id,
-          projectId: task.projectId,
-          role: { in: ['OWNER', 'ADMIN'] },
-        },
-      });
-      
-      if (!canDelete) {
-        throw new Error("You don't have permission to delete this task");
-      }
-      
-      // Delete the task
-      try {
-        await prisma.task.delete({
-          where: { id: taskId },
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update task",
+          cause: error
         });
-        
-        return { success: true };
-      } catch (error) {
-        console.error("Error deleting task:", error);
-        throw new Error("Failed to delete task");
       }
     }),
 
-  addComment: protectedProcedure
-    .input(z.object({
-      taskId: z.string(),
-      content: z.string().min(1, "Comment cannot be empty"),
-      parentCommentId: z.string().optional(),
-    }))
-    .mutation(async ({ ctx, input }) => {
+  // Add a new method to get tasks created by the current user
+  getCreatedTasks: protectedProcedure
+    .query(async ({ ctx }) => {
       const { session, prisma } = ctx;
-      const { taskId, content, parentCommentId } = input;
-      
+
       try {
-        const comment = await prisma.comment.create({
-          data: {
-            content,
-            author: {
-              connect: { id: session.user.id },
-            },
-            task: {
-              connect: { id: taskId },
-            },
-            parentComment: parentCommentId
-              ? { connect: { id: parentCommentId } }
-              : undefined,
+        const tasks = await prisma.task.findMany({
+          where: {
+            creatorId: session.user.id
+          },
+          include: {
+            project: true,
+            assignedTo: true,
+            tags: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
           },
         });
-        
-        // Get the task to notify the assigned user
-        const task = await prisma.task.findUnique({
-          where: { id: taskId },
-          select: { title: true, assignedToId: true, projectId: true },
-        });
-        
-        // Create a notification for the task assignee if it's not the comment author
-        if (task?.assignedToId && task.assignedToId !== session.user.id) {
-          await prisma.notification.create({
-            data: {
-              type: 'COMMENT_MENTION',
-              message: `New comment on task "${task.title}"`,
-              userId: task.assignedToId,
-              taskId,
-              projectId: task.projectId,
-            },
-          });
-        }
-        
-        return comment;
+
+        return tasks;
       } catch (error) {
-        console.error("Error adding comment:", error);
-        throw new Error("Failed to add comment");
+        console.error("Error fetching created tasks:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch created tasks",
+          cause: error
+        });
       }
     }),
 });

@@ -1,6 +1,7 @@
 // src/server/api/routers/user.ts
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
   getProfile: protectedProcedure
@@ -12,12 +13,61 @@ export const userRouter = createTRPCRouter({
           where: {
             id: session.user.id,
           },
+          include: {
+            createdTasks: true,
+            assignedTasks: true,
+          }
         });
         
         return user;
       } catch (error) {
         console.error("Error fetching user profile:", error);
-        throw new Error("Failed to fetch user profile");
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch user profile",
+        });
+      }
+    }),
+
+  // In userRouter
+  getAvailableUsers: protectedProcedure
+    .input(z.object({
+      projectId: z.string()
+    }))
+    .query(async ({ ctx, input }) => {
+      const { prisma, session } = ctx;
+      const { projectId } = input;
+
+      try {
+        // Find users who are not already members of this project
+        const existingMembers = await prisma.teamMembership.findMany({
+          where: { projectId },
+          select: { userId: true }
+        });
+
+        const existingMemberIds = existingMembers.map(member => member.userId);
+
+        // Fetch users who are not already in the project
+        const availableUsers = await prisma.user.findMany({
+          where: {
+            id: { 
+              notIn: [...existingMemberIds, session.user.id] 
+            }
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        });
+
+        return availableUsers;
+      } catch (error) {
+        console.error("Error fetching available users:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch available users",
+        });
       }
     }),
 
@@ -44,7 +94,10 @@ export const userRouter = createTRPCRouter({
         return updatedUser;
       } catch (error) {
         console.error("Error updating user profile:", error);
-        throw new Error("Failed to update user profile");
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR", 
+          message: "Failed to update user profile",
+        });
       }
     }),
 
@@ -83,7 +136,10 @@ export const userRouter = createTRPCRouter({
         };
       } catch (error) {
         console.error("Error fetching notifications:", error);
-        throw new Error("Failed to fetch notifications");
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch notifications",
+        });
       }
     }),
 
@@ -102,7 +158,10 @@ export const userRouter = createTRPCRouter({
         });
         
         if (!notification || notification.userId !== session.user.id) {
-          throw new Error("Notification not found or access denied");
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Notification not found or access denied",
+          });
         }
         
         const updatedNotification = await prisma.notification.update({
@@ -113,7 +172,10 @@ export const userRouter = createTRPCRouter({
         return updatedNotification;
       } catch (error) {
         console.error("Error marking notification as read:", error);
-        throw new Error("Failed to update notification");
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update notification",
+        });
       }
     }),
 
@@ -135,7 +197,10 @@ export const userRouter = createTRPCRouter({
         return { count: result.count };
       } catch (error) {
         console.error("Error marking all notifications as read:", error);
-        throw new Error("Failed to update notifications");
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update notifications",
+        });
       }
     }),
 
@@ -175,7 +240,10 @@ export const userRouter = createTRPCRouter({
         return users;
       } catch (error) {
         console.error("Error searching users:", error);
-        throw new Error("Failed to search users");
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to search users",
+        });
       }
     }),
 });

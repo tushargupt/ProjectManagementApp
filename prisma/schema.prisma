@@ -64,13 +64,14 @@ model User {
   
   // Relationship fields
   projects      Project[]
-  tasks         Task[]
+  createdTasks  Task[]    @relation("TaskCreator")
   comments      Comment[]
   teamMemberships TeamMembership[]
   notifications Notification[]
   
   // Add this line to reference uploaded documents
   uploadedDocuments ProjectDocument[]
+  assignedTasks Task[] @relation("TaskAssignments")
 }
 
 // Notification model for user updates and task assignments
@@ -146,11 +147,13 @@ model Task {
   project     Project  @relation(fields: [projectId], references: [id])
   projectId   String
   
-  assignedTo  User?    @relation(fields: [assignedToId], references: [id])
-  assignedToId String?
+  // Task creator relationship
+  creator     User     @relation("TaskCreator", fields: [creatorId], references: [id])
+  creatorId   String
   
   comments    Comment[]
   tags        TaskTag[]
+  assignedTo  User[]   @relation("TaskAssignments")
   dependencies TaskDependency[] @relation("TaskDependencies")
 }
 
