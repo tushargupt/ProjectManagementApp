@@ -22,7 +22,7 @@ A comprehensive task management and collaboration tool built with the T3 stack, 
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/ProjectManagementApp.git
+git clone https://github.com/tushargupt/ProjectManagementApp.git
 cd ProjectManagementApp
 ```
 
@@ -98,8 +98,6 @@ ProjectManagementApp/
 - Team collaboration
 - User profile management
 
-## Contributing
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.

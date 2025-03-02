@@ -2,11 +2,11 @@ import { SSTConfig } from "sst";
 import { NextjsSite } from "sst/constructs";
 import { Config } from "sst/constructs";
 
-export default {
+const config: SSTConfig = {
   config(_input) {
     return {
       name: "project-management-app",
-      region: "us-east-1",
+      region: "ap-south-1",
     };
   },
   stacks(app) {
@@ -39,4 +39,6 @@ export default {
       });
     });
   },
-} satisfies SSTConfig;
+};
+
+export default config;

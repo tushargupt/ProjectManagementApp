@@ -37,13 +37,15 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "serverless-stack": "^0.1.0",
+    "sst-darwin-arm64": "^3.9.21",
     "superjson": "^2.2.1",
     "vitest": "^3.0.7",
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.147",
     "@types/eslint": "^8.56.10",
-    "@types/node": "^20.14.10",
+    "@types/node": "^20.17.22",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
@@ -54,8 +56,9 @@
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "prisma": "^5.14.0",
+    "sst": "^3.9.21",
     "tailwindcss": "^3.4.3",
-    "typescript": "^5.5.3"
+    "typescript": "^5.7.3"
   },
   "ct3aMetadata": {
     "initVersion": "7.38.1"

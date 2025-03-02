@@ -1,15 +1,15 @@
-// src/app/projects/[id]/page.tsx
 import { redirect } from "next/navigation";
 import { getAuthSession } from "~/server/auth";
 import ProjectDetailClient from "./ProjectDetailClient";
+import { PageProps } from "next";
 
-interface ProjectDetailPageProps {
-  params: {
-    id: string;
-  };
-}
+type ProjectParams = {
+  id: string;
+};
 
-export default async function ProjectDetailPage({ params }: ProjectDetailPageProps) {
+export default async function ProjectDetailPage({ 
+  params 
+}: PageProps<{ params: ProjectParams }>) { // Ensure correct typing
   const session = await getAuthSession();
   
   if (!session) {

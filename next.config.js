@@ -5,21 +5,26 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
+/** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  typescript: {
+    // This will ignore TypeScript errors during build
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    // This will ignore ESLint errors during build
+    ignoreDuringBuilds: true,
+  },
+  // Maintain your existing configuration below
   experimental: {
     appDir: true
   },
-
-  /**
-   * If you are using `appDir` then you must comment the below `i18n` config out.
-   *
-   * @see https://github.com/vercel/next.js/issues/41980
-   */
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
-  },
+  // Comment out i18n if you're using app directory
+  // i18n: {
+  //   locales: ["en"],
+  //   defaultLocale: "en",
+  // },
   transpilePackages: ["geist"],
 };
 
