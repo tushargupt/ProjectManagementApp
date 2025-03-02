@@ -1,4 +1,3 @@
-// src/app/projects/ProjectsClient.tsx - With Debug
 "use client";
 
 import React, { useState, useEffect } from "react";

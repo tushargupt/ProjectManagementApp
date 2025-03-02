@@ -1,4 +1,3 @@
-// stacks/DatabaseStack.ts
 import { StackContext, RDS } from "sst/constructs";
 
 export function DatabaseStack({ stack }: StackContext) {

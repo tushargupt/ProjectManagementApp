@@ -1,4 +1,3 @@
-// sst.config.ts
 import { SSTConfig } from "sst";
 import { NextjsSite } from "sst/constructs";
 import { Config } from "sst/constructs";

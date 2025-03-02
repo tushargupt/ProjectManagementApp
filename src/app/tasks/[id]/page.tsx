@@ -1,4 +1,3 @@
-// src/app/tasks/[id]/page.tsx
 import { redirect } from "next/navigation";
 import { getAuthSession } from "~/server/auth";
 import TaskDetailClient from "./TaskDetailClient";

@@ -1,5 +1,4 @@
 
-// src/functions/authenticator.ts
 import { Handler } from "sst/node/auth";
 import { createClient } from "@supabase/supabase-js";
 

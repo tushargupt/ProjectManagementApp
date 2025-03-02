@@ -1,4 +1,3 @@
-// src/app/projects/page.tsx
 import { redirect } from "next/navigation";
 import { getAuthSession } from "~/server/auth";
 import ProjectsClient from "./ProjectsClient";

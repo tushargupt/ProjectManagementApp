@@ -1,4 +1,3 @@
-// src/app/api/debug-session/route.ts
 import { NextResponse } from 'next/server';
 import { getAuthSession } from '~/server/auth';
 

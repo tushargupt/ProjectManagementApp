@@ -1,4 +1,3 @@
-// stacks/CacheStack.ts
 import { StackContext, Cache } from "sst/constructs";
 
 export function CacheStack({ stack }: StackContext) {

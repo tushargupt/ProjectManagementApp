@@ -1,4 +1,3 @@
-// src/server/api/root.ts
 import { createTRPCRouter } from "./trpc";
 import { postRouter } from "./routers/post";
 import { userRouter } from "./routers/user";

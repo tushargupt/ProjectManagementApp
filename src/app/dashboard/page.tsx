@@ -1,4 +1,3 @@
-// src/app/dashboard/page.tsx
 import { redirect } from "next/navigation";
 import { getAuthSession } from "~/server/auth";
 import DashboardClient from "./DashboardClient";

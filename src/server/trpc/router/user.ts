@@ -1,4 +1,3 @@
-// src/server/trpc/router/user.ts
 import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 import { TRPCError } from '@trpc/server';

@@ -1,4 +1,3 @@
-// src/app/auth/signup/SignUpComponent.tsx
 'use client';
 
 import { useState } from 'react';

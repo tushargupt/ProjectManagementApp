@@ -1,4 +1,3 @@
-// src/hooks/useDebugTRPC.ts
 import { useState, useEffect, useRef } from 'react';
 
 /**

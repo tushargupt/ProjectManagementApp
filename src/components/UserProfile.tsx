@@ -1,4 +1,3 @@
-// src/components/UserProfile.tsx
 import React, { useState } from 'react';
 import { trpc } from '~/utils/trpc';
 

@@ -1,4 +1,3 @@
-// src/components/ProjectList.tsx
 import React from 'react';
 import { Project } from '@prisma/client';
 

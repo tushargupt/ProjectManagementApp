@@ -1,4 +1,3 @@
-// stacks/AuthStack.ts
 import { StackContext, Auth } from "sst/constructs";
 
 export function AuthStack({ stack }: StackContext) {
