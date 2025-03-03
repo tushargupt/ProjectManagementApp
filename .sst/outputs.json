@@ -1,0 +1,12 @@
+{
+  "tushargupta-project-management-app-AuthStack": {},
+  "tushargupta-project-management-app-CacheStack": {
+    "CachePort": "6379",
+    "CacheEndpoint": "tus-ap-1x3ikjgvmw40v.8clbxf.0001.aps1.cache.amazonaws.com"
+  },
+  "tushargupta-project-management-app-DatabaseStack": {
+    "DatabasePort": "5432",
+    "DatabaseSecretArn": "arn:aws:secretsmanager:ap-south-1:539247456834:secret:tushargupta-undefined-db-credentials-ATCq2H",
+    "DatabaseEndpoint": "tushargupta-project-manag-postgresqlinstanced9ad3c-ltgqtafr2kee.ctgikc8o2kli.ap-south-1.rds.amazonaws.com"
+  }
+}

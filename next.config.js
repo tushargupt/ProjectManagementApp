@@ -18,7 +18,7 @@ const config = {
   },
   // Maintain your existing configuration below
   experimental: {
-    appDir: true
+
   },
   // Comment out i18n if you're using app directory
   // i18n: {

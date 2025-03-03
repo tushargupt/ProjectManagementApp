@@ -1,0 +1,34 @@
+{
+  "version": "34.0.0",
+  "files": {
+    "66800427d41961f77e343d774a8e6c973930d761e753e9d1eca594948a537701": {
+      "source": {
+        "path": "asset.66800427d41961f77e343d774a8e6c973930d761e753e9d1eca594948a537701",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "539247456834-ap-south-1": {
+          "bucketName": "cdk-hnb659fds-assets-539247456834-ap-south-1",
+          "objectKey": "66800427d41961f77e343d774a8e6c973930d761e753e9d1eca594948a537701.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-file-publishing-role-539247456834-ap-south-1"
+        }
+      }
+    },
+    "2a95e5e068ac2149dc0adddc591230089a12fa9395e6cce4f2d14a27c9cc4f8e": {
+      "source": {
+        "path": "tushargupta-project-management-app-AuthStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "539247456834-ap-south-1": {
+          "bucketName": "cdk-hnb659fds-assets-539247456834-ap-south-1",
+          "objectKey": "2a95e5e068ac2149dc0adddc591230089a12fa9395e6cce4f2d14a27c9cc4f8e.json",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-file-publishing-role-539247456834-ap-south-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

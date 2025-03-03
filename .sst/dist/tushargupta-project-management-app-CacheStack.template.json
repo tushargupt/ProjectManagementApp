@@ -1,0 +1,807 @@
+{
+ "Resources": {
+  "CustomResourceHandlerServiceRole41AEC181": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   }
+  },
+  "CustomResourceHandlerE8FB56BA": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-539247456834-ap-south-1",
+     "S3Key": "2e1072b29ca92ef55e22ea1c278ae6e6186e180edac76ac8ee147fbd839cef87.zip"
+    },
+    "Handler": "index.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomResourceHandlerServiceRole41AEC181",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "CustomResourceHandlerServiceRole41AEC181"
+   ]
+  },
+  "Cache18F6EE16": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   }
+  },
+  "CachePublicSubnet1SubnetDF071B62": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1a",
+    "CidrBlock": "10.0.0.0/19",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePublicSubnet1RouteTable2C93B83A": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePublicSubnet1RouteTableAssociationE2F8B176": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "CachePublicSubnet1RouteTable2C93B83A"
+    },
+    "SubnetId": {
+     "Ref": "CachePublicSubnet1SubnetDF071B62"
+    }
+   }
+  },
+  "CachePublicSubnet1DefaultRouteA0F32494": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "CacheIGWB0C6D48B"
+    },
+    "RouteTableId": {
+     "Ref": "CachePublicSubnet1RouteTable2C93B83A"
+    }
+   },
+   "DependsOn": [
+    "CacheVPCGW89267D0E"
+   ]
+  },
+  "CachePublicSubnet1EIP9FEB2C36": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   }
+  },
+  "CachePublicSubnet1NATGateway6AFD6DBD": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "CachePublicSubnet1EIP9FEB2C36",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "CachePublicSubnet1SubnetDF071B62"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   },
+   "DependsOn": [
+    "CachePublicSubnet1DefaultRouteA0F32494",
+    "CachePublicSubnet1RouteTableAssociationE2F8B176"
+   ]
+  },
+  "CachePublicSubnet2Subnet66874DE7": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1b",
+    "CidrBlock": "10.0.32.0/19",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PublicSubnet2"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePublicSubnet2RouteTableAA1E1855": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PublicSubnet2"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePublicSubnet2RouteTableAssociation123201A7": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "CachePublicSubnet2RouteTableAA1E1855"
+    },
+    "SubnetId": {
+     "Ref": "CachePublicSubnet2Subnet66874DE7"
+    }
+   }
+  },
+  "CachePublicSubnet2DefaultRoute05E6C621": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "CacheIGWB0C6D48B"
+    },
+    "RouteTableId": {
+     "Ref": "CachePublicSubnet2RouteTableAA1E1855"
+    }
+   },
+   "DependsOn": [
+    "CacheVPCGW89267D0E"
+   ]
+  },
+  "CachePublicSubnet3Subnet542BE612": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1c",
+    "CidrBlock": "10.0.64.0/19",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PublicSubnet3"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePublicSubnet3RouteTable76CB02F7": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PublicSubnet3"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePublicSubnet3RouteTableAssociation30E7EF9F": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "CachePublicSubnet3RouteTable76CB02F7"
+    },
+    "SubnetId": {
+     "Ref": "CachePublicSubnet3Subnet542BE612"
+    }
+   }
+  },
+  "CachePublicSubnet3DefaultRoute8F2DC98D": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "CacheIGWB0C6D48B"
+    },
+    "RouteTableId": {
+     "Ref": "CachePublicSubnet3RouteTable76CB02F7"
+    }
+   },
+   "DependsOn": [
+    "CacheVPCGW89267D0E"
+   ]
+  },
+  "CachePrivateSubnet1Subnet59431F5D": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1a",
+    "CidrBlock": "10.0.96.0/19",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePrivateSubnet1RouteTableEDAD18A6": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePrivateSubnet1RouteTableAssociation48550DC5": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "CachePrivateSubnet1RouteTableEDAD18A6"
+    },
+    "SubnetId": {
+     "Ref": "CachePrivateSubnet1Subnet59431F5D"
+    }
+   }
+  },
+  "CachePrivateSubnet1DefaultRoute76B839F7": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "CachePublicSubnet1NATGateway6AFD6DBD"
+    },
+    "RouteTableId": {
+     "Ref": "CachePrivateSubnet1RouteTableEDAD18A6"
+    }
+   }
+  },
+  "CachePrivateSubnet2Subnet758F5ACF": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1b",
+    "CidrBlock": "10.0.128.0/19",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet2"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePrivateSubnet2RouteTableA6A11C4C": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet2"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePrivateSubnet2RouteTableAssociationB97C5755": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "CachePrivateSubnet2RouteTableA6A11C4C"
+    },
+    "SubnetId": {
+     "Ref": "CachePrivateSubnet2Subnet758F5ACF"
+    }
+   }
+  },
+  "CachePrivateSubnet2DefaultRouteD9ADDEFE": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "CachePublicSubnet1NATGateway6AFD6DBD"
+    },
+    "RouteTableId": {
+     "Ref": "CachePrivateSubnet2RouteTableA6A11C4C"
+    }
+   }
+  },
+  "CachePrivateSubnet3SubnetA7B59742": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1c",
+    "CidrBlock": "10.0.160.0/19",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet3"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePrivateSubnet3RouteTable8048D671": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet3"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CachePrivateSubnet3RouteTableAssociation15095284": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "CachePrivateSubnet3RouteTable8048D671"
+    },
+    "SubnetId": {
+     "Ref": "CachePrivateSubnet3SubnetA7B59742"
+    }
+   }
+  },
+  "CachePrivateSubnet3DefaultRouteF632B0D8": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "CachePublicSubnet1NATGateway6AFD6DBD"
+    },
+    "RouteTableId": {
+     "Ref": "CachePrivateSubnet3RouteTable8048D671"
+    }
+   }
+  },
+  "CacheIGWB0C6D48B": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-CacheStack/Cache"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   }
+  },
+  "CacheVPCGW89267D0E": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "CacheIGWB0C6D48B"
+    },
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "CacheSubnetGroup": {
+   "Type": "AWS::ElastiCache::SubnetGroup",
+   "Properties": {
+    "Description": "Subnet group for Redis cache",
+    "SubnetIds": [
+     {
+      "Ref": "CachePrivateSubnet1Subnet59431F5D"
+     },
+     {
+      "Ref": "CachePrivateSubnet2Subnet758F5ACF"
+     },
+     {
+      "Ref": "CachePrivateSubnet3SubnetA7B59742"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   }
+  },
+  "CacheSecurityGroupC6A3ACCF": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Allow access to Redis",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow Redis access",
+      "FromPort": 6379,
+      "IpProtocol": "tcp",
+      "ToPort": 6379
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "Cache18F6EE16"
+    }
+   }
+  },
+  "AppCache": {
+   "Type": "AWS::ElastiCache::CacheCluster",
+   "Properties": {
+    "AutoMinorVersionUpgrade": true,
+    "CacheNodeType": "cache.t3.micro",
+    "CacheSubnetGroupName": {
+     "Ref": "CacheSubnetGroup"
+    },
+    "Engine": "redis",
+    "EngineVersion": "7.0",
+    "NumCacheNodes": 1,
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcSecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "CacheSecurityGroupC6A3ACCF",
+       "GroupId"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "Outputs": {
+  "CacheEndpoint": {
+   "Value": {
+    "Fn::GetAtt": [
+     "AppCache",
+     "RedisEndpoint.Address"
+    ]
+   }
+  },
+  "CachePort": {
+   "Value": {
+    "Fn::GetAtt": [
+     "AppCache",
+     "RedisEndpoint.Port"
+    ]
+   }
+  },
+  "SSTMetadata": {
+   "Value": "{\"app\":\"project-management-app\",\"stage\":\"tushargupta\",\"version\":\"2.36.0\",\"metadata\":[]}"
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,647 @@
+{
+ "Resources": {
+  "CustomResourceHandlerServiceRole41AEC181": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   }
+  },
+  "CustomResourceHandlerE8FB56BA": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-539247456834-ap-south-1",
+     "S3Key": "57238b5970827667080a761960f40cbc56dc182ac15eb1095065887ee5792cfa.zip"
+    },
+    "Handler": "index.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomResourceHandlerServiceRole41AEC181",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "CustomResourceHandlerServiceRole41AEC181"
+   ]
+  },
+  "DatabaseVPCB5B6076B": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   }
+  },
+  "DatabaseVPCPublicSubnet1Subnet63B0CC5B": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1a",
+    "CidrBlock": "10.0.0.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DatabaseVPCPublicSubnet1RouteTable513D440F": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DatabaseVPCPublicSubnet1RouteTableAssociation3847AFA4": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "DatabaseVPCPublicSubnet1RouteTable513D440F"
+    },
+    "SubnetId": {
+     "Ref": "DatabaseVPCPublicSubnet1Subnet63B0CC5B"
+    }
+   }
+  },
+  "DatabaseVPCPublicSubnet1DefaultRoute4ABC1B4C": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "DatabaseVPCIGW5EBED972"
+    },
+    "RouteTableId": {
+     "Ref": "DatabaseVPCPublicSubnet1RouteTable513D440F"
+    }
+   },
+   "DependsOn": [
+    "DatabaseVPCVPCGWE97DB90B"
+   ]
+  },
+  "DatabaseVPCPublicSubnet2Subnet4AF96223": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1b",
+    "CidrBlock": "10.0.64.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet2"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DatabaseVPCPublicSubnet2RouteTable8BE59444": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet2"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DatabaseVPCPublicSubnet2RouteTableAssociation5CC21E01": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "DatabaseVPCPublicSubnet2RouteTable8BE59444"
+    },
+    "SubnetId": {
+     "Ref": "DatabaseVPCPublicSubnet2Subnet4AF96223"
+    }
+   }
+  },
+  "DatabaseVPCPublicSubnet2DefaultRoute2350CAD3": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "DatabaseVPCIGW5EBED972"
+    },
+    "RouteTableId": {
+     "Ref": "DatabaseVPCPublicSubnet2RouteTable8BE59444"
+    }
+   },
+   "DependsOn": [
+    "DatabaseVPCVPCGWE97DB90B"
+   ]
+  },
+  "DatabaseVPCIsolatedSubnet1Subnet8107B788": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1a",
+    "CidrBlock": "10.0.128.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DatabaseVPCIsolatedSubnet1RouteTableB2567875": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet1"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DatabaseVPCIsolatedSubnet1RouteTableAssociation836F22BB": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "DatabaseVPCIsolatedSubnet1RouteTableB2567875"
+    },
+    "SubnetId": {
+     "Ref": "DatabaseVPCIsolatedSubnet1Subnet8107B788"
+    }
+   }
+  },
+  "DatabaseVPCIsolatedSubnet2SubnetB748B8EA": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ap-south-1b",
+    "CidrBlock": "10.0.192.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet2"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DatabaseVPCIsolatedSubnet2RouteTable569D3B6F": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet2"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DatabaseVPCIsolatedSubnet2RouteTableAssociation535274D1": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "DatabaseVPCIsolatedSubnet2RouteTable569D3B6F"
+    },
+    "SubnetId": {
+     "Ref": "DatabaseVPCIsolatedSubnet2SubnetB748B8EA"
+    }
+   }
+  },
+  "DatabaseVPCIGW5EBED972": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "tushargupta-project-management-app-DatabaseStack/DatabaseVPC"
+     },
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   }
+  },
+  "DatabaseVPCVPCGWE97DB90B": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "DatabaseVPCIGW5EBED972"
+    },
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DatabaseSecurityGroup7319C0F6": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Allow database access",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "DatabaseVPCB5B6076B",
+        "CidrBlock"
+       ]
+      },
+      "Description": "Allow PostgreSQL access from within VPC",
+      "FromPort": 5432,
+      "IpProtocol": "tcp",
+      "ToPort": 5432
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VpcId": {
+     "Ref": "DatabaseVPCB5B6076B"
+    }
+   }
+  },
+  "DBCredentialsSecretAFB45EA2": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "GenerateSecretString": {
+     "ExcludePunctuation": true,
+     "GenerateStringKey": "password",
+     "IncludeSpace": false,
+     "SecretStringTemplate": "{\"username\":\"postgres\"}"
+    },
+    "Name": "tushargupta-undefined-db-credentials",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "DBCredentialsSecretAttachment8D28662C": {
+   "Type": "AWS::SecretsManager::SecretTargetAttachment",
+   "Properties": {
+    "SecretId": {
+     "Ref": "DBCredentialsSecretAFB45EA2"
+    },
+    "TargetId": {
+     "Ref": "PostgreSQLInstanceD9AD3CF0"
+    },
+    "TargetType": "AWS::RDS::DBInstance"
+   }
+  },
+  "PostgreSQLInstanceSubnetGroup80C84F06": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Subnet group for PostgreSQLInstance database",
+    "SubnetIds": [
+     {
+      "Ref": "DatabaseVPCIsolatedSubnet1Subnet8107B788"
+     },
+     {
+      "Ref": "DatabaseVPCIsolatedSubnet2SubnetB748B8EA"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ]
+   }
+  },
+  "PostgreSQLInstanceD9AD3CF0": {
+   "Type": "AWS::RDS::DBInstance",
+   "Properties": {
+    "AllocatedStorage": "20",
+    "BackupRetentionPeriod": 7,
+    "CopyTagsToSnapshot": true,
+    "DBInstanceClass": "db.t3.small",
+    "DBName": "projectmanagement",
+    "DBSubnetGroupName": {
+     "Ref": "PostgreSQLInstanceSubnetGroup80C84F06"
+    },
+    "DeletionProtection": false,
+    "Engine": "postgres",
+    "EngineVersion": "12",
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "DBCredentialsSecretAFB45EA2"
+       },
+       ":SecretString:password::}}"
+      ]
+     ]
+    },
+    "MasterUsername": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "DBCredentialsSecretAFB45EA2"
+       },
+       ":SecretString:username::}}"
+      ]
+     ]
+    },
+    "MaxAllocatedStorage": 100,
+    "PubliclyAccessible": false,
+    "StorageType": "gp2",
+    "Tags": [
+     {
+      "Key": "sst:app",
+      "Value": "project-management-app"
+     },
+     {
+      "Key": "sst:stage",
+      "Value": "tushargupta"
+     }
+    ],
+    "VPCSecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "DatabaseSecurityGroup7319C0F6",
+       "GroupId"
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  }
+ },
+ "Outputs": {
+  "DatabaseSecretArn": {
+   "Value": {
+    "Ref": "DBCredentialsSecretAFB45EA2"
+   }
+  },
+  "DatabaseEndpoint": {
+   "Value": {
+    "Fn::GetAtt": [
+     "PostgreSQLInstanceD9AD3CF0",
+     "Endpoint.Address"
+    ]
+   }
+  },
+  "DatabasePort": {
+   "Value": {
+    "Fn::GetAtt": [
+     "PostgreSQLInstanceD9AD3CF0",
+     "Endpoint.Port"
+    ]
+   }
+  },
+  "SSTMetadata": {
+   "Value": "{\"app\":\"project-management-app\",\"stage\":\"tushargupta\",\"version\":\"2.36.0\",\"metadata\":[]}"
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

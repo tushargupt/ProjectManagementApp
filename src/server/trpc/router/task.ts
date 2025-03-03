@@ -1,7 +1,6 @@
 export const taskRouter = router({
-    // Get tasks for the authenticated user getUserTasks: protectedProcedure
-    .input(
-        z.object({
+  getUserTasks: protectedProcedure
+    .input(z.object({
           status: z.enum(['BACKLOG', 'TODO', 'IN_PROGRESS', 'REVIEW', 'DONE']).optional(),
           projectId: z.string().optional(),
         }).optional()

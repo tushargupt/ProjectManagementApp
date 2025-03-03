@@ -1,0 +1,34 @@
+{
+  "version": "34.0.0",
+  "files": {
+    "57238b5970827667080a761960f40cbc56dc182ac15eb1095065887ee5792cfa": {
+      "source": {
+        "path": "asset.57238b5970827667080a761960f40cbc56dc182ac15eb1095065887ee5792cfa",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "539247456834-ap-south-1": {
+          "bucketName": "cdk-hnb659fds-assets-539247456834-ap-south-1",
+          "objectKey": "57238b5970827667080a761960f40cbc56dc182ac15eb1095065887ee5792cfa.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-file-publishing-role-539247456834-ap-south-1"
+        }
+      }
+    },
+    "0588664538869fab5b3edd64adceca879bf3e17b9680982f590020eaff12b67d": {
+      "source": {
+        "path": "tushargupta-project-management-app-DatabaseStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "539247456834-ap-south-1": {
+          "bucketName": "cdk-hnb659fds-assets-539247456834-ap-south-1",
+          "objectKey": "0588664538869fab5b3edd64adceca879bf3e17b9680982f590020eaff12b67d.json",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-file-publishing-role-539247456834-ap-south-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

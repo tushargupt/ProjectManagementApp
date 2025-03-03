@@ -1,0 +1,632 @@
+{
+  "version": "34.0.0",
+  "artifacts": {
+    "tushargupta-project-management-app-AuthStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "tushargupta-project-management-app-AuthStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "tushargupta-project-management-app-AuthStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://539247456834/ap-south-1",
+      "properties": {
+        "templateFile": "tushargupta-project-management-app-AuthStack.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "sst:app": "project-management-app",
+          "sst:stage": "tushargupta"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-deploy-role-539247456834-ap-south-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-cfn-exec-role-539247456834-ap-south-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-539247456834-ap-south-1/2a95e5e068ac2149dc0adddc591230089a12fa9395e6cce4f2d14a27c9cc4f8e.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "tushargupta-project-management-app-AuthStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-lookup-role-539247456834-ap-south-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "tushargupta-project-management-app-AuthStack.assets"
+      ],
+      "metadata": {
+        "/tushargupta-project-management-app-AuthStack": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "sst:app",
+                "Value": "project-management-app"
+              },
+              {
+                "Key": "sst:stage",
+                "Value": "tushargupta"
+              }
+            ]
+          }
+        ],
+        "/tushargupta-project-management-app-AuthStack/CustomResourceHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomResourceHandlerServiceRole41AEC181"
+          }
+        ],
+        "/tushargupta-project-management-app-AuthStack/CustomResourceHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomResourceHandlerE8FB56BA"
+          }
+        ],
+        "/tushargupta-project-management-app-AuthStack/Auth/CloudFrontInvalidatorPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthCloudFrontInvalidatorPolicy5DBD83DD"
+          }
+        ],
+        "/tushargupta-project-management-app-AuthStack/Auth/StackMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthStackMetadata8B639D1A"
+          }
+        ],
+        "/tushargupta-project-management-app-AuthStack/SSTStackOutputSSTMetadata": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SSTMetadata"
+          }
+        ],
+        "/tushargupta-project-management-app-AuthStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/tushargupta-project-management-app-AuthStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "tushargupta-project-management-app-AuthStack"
+    },
+    "tushargupta-project-management-app-CacheStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "tushargupta-project-management-app-CacheStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "tushargupta-project-management-app-CacheStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://539247456834/ap-south-1",
+      "properties": {
+        "templateFile": "tushargupta-project-management-app-CacheStack.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "sst:app": "project-management-app",
+          "sst:stage": "tushargupta"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-deploy-role-539247456834-ap-south-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-cfn-exec-role-539247456834-ap-south-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-539247456834-ap-south-1/503ceddd550eac0955fc900d302614a92ec27027be1a0a8d8fc7473f65e5d5bc.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "tushargupta-project-management-app-CacheStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-lookup-role-539247456834-ap-south-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "tushargupta-project-management-app-CacheStack.assets"
+      ],
+      "metadata": {
+        "/tushargupta-project-management-app-CacheStack": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "sst:app",
+                "Value": "project-management-app"
+              },
+              {
+                "Key": "sst:stage",
+                "Value": "tushargupta"
+              }
+            ]
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/CustomResourceHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomResourceHandlerServiceRole41AEC181"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/CustomResourceHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomResourceHandlerE8FB56BA"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "Cache18F6EE16"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet1SubnetDF071B62"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet1RouteTable2C93B83A"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet1RouteTableAssociationE2F8B176"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet1DefaultRouteA0F32494"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1/EIP": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet1EIP9FEB2C36"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet1/NATGateway": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet1NATGateway6AFD6DBD"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet2Subnet66874DE7"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet2RouteTableAA1E1855"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet2RouteTableAssociation123201A7"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet2DefaultRoute05E6C621"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet3/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet3Subnet542BE612"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet3/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet3RouteTable76CB02F7"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet3/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet3RouteTableAssociation30E7EF9F"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PublicSubnet3/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePublicSubnet3DefaultRoute8F2DC98D"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet1Subnet59431F5D"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet1RouteTableEDAD18A6"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet1RouteTableAssociation48550DC5"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet1DefaultRoute76B839F7"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet2Subnet758F5ACF"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet2RouteTableA6A11C4C"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet2RouteTableAssociationB97C5755"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet2DefaultRouteD9ADDEFE"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet3/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet3SubnetA7B59742"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet3/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet3RouteTable8048D671"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet3/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet3RouteTableAssociation15095284"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/PrivateSubnet3/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePrivateSubnet3DefaultRouteF632B0D8"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/IGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CacheIGWB0C6D48B"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/Cache/VPCGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CacheVPCGW89267D0E"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/CacheSubnetGroup": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CacheSubnetGroup"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/CacheSecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CacheSecurityGroupC6A3ACCF"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/AppCache": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AppCache"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/SSTStackOutputCacheEndpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CacheEndpoint"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/SSTStackOutputCachePort": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CachePort"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/SSTStackOutputSSTMetadata": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SSTMetadata"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/tushargupta-project-management-app-CacheStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "tushargupta-project-management-app-CacheStack"
+    },
+    "tushargupta-project-management-app-DatabaseStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "tushargupta-project-management-app-DatabaseStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "tushargupta-project-management-app-DatabaseStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://539247456834/ap-south-1",
+      "properties": {
+        "templateFile": "tushargupta-project-management-app-DatabaseStack.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "sst:app": "project-management-app",
+          "sst:stage": "tushargupta"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-deploy-role-539247456834-ap-south-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-cfn-exec-role-539247456834-ap-south-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-539247456834-ap-south-1/0588664538869fab5b3edd64adceca879bf3e17b9680982f590020eaff12b67d.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "tushargupta-project-management-app-DatabaseStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::539247456834:role/cdk-hnb659fds-lookup-role-539247456834-ap-south-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "tushargupta-project-management-app-DatabaseStack.assets"
+      ],
+      "metadata": {
+        "/tushargupta-project-management-app-DatabaseStack": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "sst:app",
+                "Value": "project-management-app"
+              },
+              {
+                "Key": "sst:stage",
+                "Value": "tushargupta"
+              }
+            ]
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/CustomResourceHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomResourceHandlerServiceRole41AEC181"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/CustomResourceHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomResourceHandlerE8FB56BA"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCB5B6076B"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCPublicSubnet1Subnet63B0CC5B"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCPublicSubnet1RouteTable513D440F"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCPublicSubnet1RouteTableAssociation3847AFA4"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCPublicSubnet1DefaultRoute4ABC1B4C"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCPublicSubnet2Subnet4AF96223"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCPublicSubnet2RouteTable8BE59444"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCPublicSubnet2RouteTableAssociation5CC21E01"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/PublicSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCPublicSubnet2DefaultRoute2350CAD3"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCIsolatedSubnet1Subnet8107B788"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCIsolatedSubnet1RouteTableB2567875"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCIsolatedSubnet1RouteTableAssociation836F22BB"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCIsolatedSubnet2SubnetB748B8EA"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCIsolatedSubnet2RouteTable569D3B6F"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IsolatedSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCIsolatedSubnet2RouteTableAssociation535274D1"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/IGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCIGW5EBED972"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseVPC/VPCGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseVPCVPCGWE97DB90B"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DatabaseSecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseSecurityGroup7319C0F6"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DBCredentialsSecret/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DBCredentialsSecretAFB45EA2"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/DBCredentialsSecret/Attachment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DBCredentialsSecretAttachment8D28662C"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/PostgreSQLInstance/SubnetGroup/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PostgreSQLInstanceSubnetGroup80C84F06"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/PostgreSQLInstance/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PostgreSQLInstanceD9AD3CF0"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/SSTStackOutputDatabaseSecretArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseSecretArn"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/SSTStackOutputDatabaseEndpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabaseEndpoint"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/SSTStackOutputDatabasePort": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DatabasePort"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/SSTStackOutputSSTMetadata": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SSTMetadata"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/tushargupta-project-management-app-DatabaseStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "tushargupta-project-management-app-DatabaseStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}
